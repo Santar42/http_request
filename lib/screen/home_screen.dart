@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_request/model/todo.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -9,6 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Todo> todos =[];
 
 Future  fetchTodo() async {
   http.Response request = await  http.get(
@@ -16,7 +20,13 @@ Future  fetchTodo() async {
     "https://jsonplaceholder.typicode.com/todos",
     ),
   );
-  print(request.body);
+ setState(() {
+   todos = (jsonDecode(request.body) as List)
+   .map(
+     (json) => Todo.fromJson(json),
+     )
+     .toList();
+ });
 }
 
 
@@ -34,8 +44,17 @@ Future  fetchTodo() async {
           "Home Screen",
           ),
       ),
-      body: Container(
-        child: Center(),
+      body: SingleChildScrollView(
+        child: ListView(
+          children: todos.map(
+            (item) => ListTile(
+            title: Text(
+              item.title,
+            ),
+          ),
+          )
+          .toList(),
+        ),
       ),
     );
   }
