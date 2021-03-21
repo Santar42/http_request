@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_request/model/todo.dart';
+import 'package:http_request/screen/gallery_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -12,25 +13,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Todo> todos =[];
+  List<Todo> todos = [];
 
-Future  fetchTodo() async {
-  http.Response request = await  http.get(
-    Uri.parse(
-    "https://jsonplaceholder.typicode.com/todos",
-    ),
-  );
- setState(() {
-   todos = (jsonDecode(request.body) as List)
-   .map(
-     (json) => Todo.fromJson(json),
-     )
-     .toList();
- });
-}
+  Future fetchTodo() async {
+    http.Response request = await http.get(
+      Uri.parse(
+        "https://jsonplaceholder.typicode.com/todos",
+      ),
+    );
+    setState(() {
+      todos = (jsonDecode(request.body) as List)
+          .map(
+            (json) => Todo.fromJson(json),
+          )
+          .toList();
+    });
+  }
 
-
-@override
+  @override
   void initState() {
     fetchTodo();
     super.initState();
@@ -40,23 +40,42 @@ Future  fetchTodo() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:Text(
+        title: Text(
           "Home Screen",
-          ),
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GalleryScreen(),
+                  ),
+                );
+              },
+              leading: Icon(Icons.picture_in_picture),
+              title: Text("Gallery"),
+            ),
+          ],
+        ),
       ),
       body: Container(
         child: ListView(
-          children: todos.map(
-            (item) => Card(
-                          child: ListTile(
-              title: Text(
-                item.title,
-              ),
-              subtitle: item.completed ? Text("เสร็จแล้ว") :  Text("กลับไปทำใหม่") ,
-          ),
-            ),
-          )
-          .toList(),
+          children: todos
+              .map(
+                (item) => Card(
+                  child: ListTile(
+                    title: Text(
+                      item.title,
+                    ),
+                    subtitle: item.completed ? Text("เสร็จ") : Text("ไปทำ"),
+                  ),
+                ),
+              )
+              .toList(),
         ),
       ),
     );
