@@ -44,14 +44,17 @@ Future  fetchTodo() async {
           "Home Screen",
           ),
       ),
-      body: SingleChildScrollView(
+      body: Container(
         child: ListView(
           children: todos.map(
-            (item) => ListTile(
-            title: Text(
-              item.title,
-            ),
+            (item) => Card(
+                          child: ListTile(
+              title: Text(
+                item.title,
+              ),
+              subtitle: item.completed ? Text("เสร็จแล้ว") :  Text("กลับไปทำใหม่") ,
           ),
+            ),
           )
           .toList(),
         ),
